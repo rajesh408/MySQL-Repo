@@ -1,0 +1,1863 @@
+/***************************************************************************
+	MySQL Commands
+****************************************************************************/
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 1 - MySQL Basic Commands - DDL
+#---------------------------------------------------------------------------
+
+#################################################
+# Creating a new database
+Create Database db_mysql_tutorial;
+#################################################
+
+
+
+#################################################
+# Using database
+Use db_mysql_tutorial;
+#################################################
+
+
+#################################################
+# Droping Database
+Drop Database database_name;
+#################################################
+
+
+
+#################################################
+# Creating a table
+
+Create table tbl_employee
+(
+	col_emp_id INT NOT NULL AUTO_INCREMENT,
+	col_emp_name VARCHAR(100) NOT NULL,
+	col_qualification VARCHAR(100) NOT NULL,
+	col_Address	VARCHAR(100),
+	PRIMARY KEY (col_emp_id)
+);
+
+
+Create table tbl_salary
+(
+	col_tran_id INT NOT NULL AUTO_INCREMENT,
+	col_emp_id INT,
+	col_amount decimal(7,2) NOT NULL,
+	PRIMARY KEY ( col_tran_id),
+	CONSTRAINT fk_tbl_salary FOREIGN KEY (col_emp_id)
+	REFERENCES tbl_employee(col_emp_id)
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+CREATE TABLE Persons
+(
+P_Id int PRIMARY KEY,
+LastName varchar(15),
+FirstName varchar(15),
+Address varchar(15),
+City varchar(15)
+);
+
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 2 - MySQL Basic Commands - DML
+#---------------------------------------------------------------------------
+
+#################################################
+# Inserting records in the table
+
+Insert into tbl_employee (col_emp_name, col_qualification, col_address) Values('Peter', 'BA', 'Delhi');
+
+Insert into tbl_employee (col_emp_name, col_qualification, col_address) Values('John', 'MA', 'Mumbai');
+
+Insert into tbl_employee (col_emp_name, col_qualification, col_address) Values('David', 'BA', 'Delhi');
+
+
+
+
+
+Insert into tbl_salary (col_emp_id, col_amount) Values(3, 5000);
+
+Insert into tbl_salary (col_emp_id, col_amount) Values(3, 6000);
+
+Insert into tbl_salary (col_emp_id, col_amount) Values(1, 7000);
+
+Insert into tbl_salary (col_emp_id) Values(2);
+
+Insert into tbl_salary (col_amount) Values(7000);
+
+
+
+Insert into tbl_salary (col_emp_id, col_amount) Values(55, 4000);
+#1452 - Cannot add or update a child row: a foreign key constraint fails
+
+
+INSERT INTO Persons (P_Id, LastName, FirstName, Address, City)
+VALUES (2, 'Gupta', 'Amit', '123 Street1', 'Delhi');
+
+INSERT INTO Persons (P_Id, LastName, FirstName, Address, City)
+VALUES (3, 'Sharma', 'Amit', '345 Street2', 'Mumbai');
+
+INSERT INTO Persons (P_Id, LastName, FirstName, Address, City)
+VALUES (4, 'Bansal', 'Rahul', '123 Square 1', 'Dehradun');
+
+INSERT INTO Persons (P_Id, LastName, FirstName, Address, City)
+VALUES (5, 'Sahni', 'Sumit', '456 Street1', 'Kolkata');
+
+INSERT INTO Persons (P_Id, LastName, FirstName, Address, City)
+VALUES (6, 'Bharat', 'Gopal', '345, Street 3', 'Delhi');
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 3 - Querying Data
+#---------------------------------------------------------------------------
+
+#################################################
+# Selecting all records from a table
+Select * from tbl_employee;
+
+
+#Selecting records from selected no of columns
+Select col_emp_name, col_qualification from tbl_employee;
+
+
+# Putting lables on default column names
+Select col_emp_name 'Employee Name', col_qualification 'Qualification' from tbl_employee;
+
+
+# Shows col_emp_name, Qualification (shows "Qualification" in all rows) and col_qualification columns
+Select col_emp_name, 'Qualification' , col_qualification  from tbl_employee;
+
+
+#Performing inline calculation for calculating Bonus
+Select col_tran_id, col_emp_id,  0.2 * col_amount 'Bonus' From tbl_salary;
+
+
+#Where clause
+Select * from tbl_employee Where col_address = 'delhi';
+
+
+#Specifying condition
+Select * from tbl_salary Where col_amount > 5000;
+
+Select * from tbl_employee Where col_qualification = 'BA' AND col_address = 'delhi';
+
+Select * from tbl_employee Where col_qualification = 'MA' Or col_address = 'delhi';
+
+Select * from tbl_employee Where col_address <> 'delhi';
+
+
+
+
+
+
+Select * from Persons;
+
+# select the persons with a last name alphabetically 
+# between "Amit" and "Rahul" from the table 
+SELECT * FROM Persons WHERE FirstName BETWEEN 'Amit' AND 'Rahul';
+
+
+# To display the persons outside the range in the previous example,
+# use NOT BETWEEN:
+SELECT * FROM Persons WHERE LastName NOT BETWEEN 'bansal' AND 'Gupta';
+
+# we want to select the persons with a last name equal
+# to "Gupta" or "Sharma" from the table above.
+SELECT * FROM Persons WHERE LastName IN ('Gupta','Sharma');
+
+# we want to select the persons living in a city 
+# that starts with "d" from the table above.
+SELECT * FROM Persons WHERE City LIKE 'd%';
+
+# Returns rows where value in col_emp_id column IS NULL
+SELECT * FROM tbl_salary WHERE col_emp_id IS NULL;
+
+
+# we want to select all the persons from the table Persons, 
+# however, we want to sort the persons descending by their last name.
+SELECT * FROM Persons ORDER BY LastName DESC;
+
+Select * from tbl_employee Order By col_Address DESC;
+
+
+
+# we want to select only the two first records in the table above.
+SELECT * FROM tbl_salary ORDER BY col_amount DESC limit 0,2;
+SELECT * FROM Persons Limit 0, 2;
+
+
+# we want to select only the distinct values from the 
+# column named "City" from the table above.
+SELECT DISTINCT City FROM Persons;
+
+
+# Date Functions
+# Returns system date and time
+SELECT Now();
+#################################################
+
+
+
+#################################################
+-- CREATE table without any constraint
+CREATE TABLE Orders
+(OrderNo int PRIMARY KEY,
+OrderPrice Numeric(5,2),
+Customer varchar(25),
+P_Id Int,
+constraint fk_orders FOREIGN KEY(P_Id)
+REFERENCES Persons(P_Id) 
+);
+
+INSERT INTO Orders (OrderNo, OrderPrice, Customer, P_Id)
+VALUES(2, 100.00, 'Amit', 2);
+
+INSERT INTO Orders (OrderNo, OrderPrice, Customer, P_Id)
+VALUES(3, 200.00, 'Amit', 3);
+
+INSERT INTO Orders (OrderNo, OrderPrice, Customer, P_Id)
+VALUES(4, 300.00, 'Rahul', 4);
+
+INSERT INTO Orders (OrderNo, OrderPrice, Customer, P_Id)
+VALUES(5, 400.00, 'Sumit', 5);
+
+INSERT INTO Orders (OrderNo, OrderPrice, Customer)
+VALUES(10, 500.00, 'Hemant');
+
+
+Select * from Orders;
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 4 - MySQL Functions
+#---------------------------------------------------------------------------
+
+
+
+#################################################
+# MySQL aggregate functions
+# An aggregate function performs a calculation on a set of values and returns a single value.
+
+
+# we want to find the average value of the "OrderPrice" fields.
+SELECT AVG(OrderPrice) AS OrderAverage FROM Orders;
+
+# we want to count the number of orders from "Customer Amit"
+SELECT COUNT(Customer) AS CustomerAmit FROM Orders WHERE Customer='Amit';
+
+# we want to find the largest value of the "OrderPrice" column.
+SELECT MAX(OrderPrice) AS LargestOrderPrice FROM Orders;
+
+# we want to find the smallest value of the "OrderPrice" column.
+SELECT MIN(OrderPrice) AS SmallestOrderPrice FROM Orders;
+
+# we want to find the sum of all "OrderPrice" fields.
+SELECT SUM(OrderPrice) AS OrderTotal FROM Orders;
+
+
+
+
+# Grouping Data
+# GROUP BY
+# groups summary report and does not produce individual table row in the resule set
+# we want to find the total sum (total order) of each customer.
+SELECT Customer,SUM(OrderPrice) FROM Orders GROUP BY Customer;
+#################################################
+
+
+
+
+
+#################################################
+#  MySQL string functions
+
+
+# Concat Function
+# The concat function is used to concatenate two or more string and returns concatenating string.
+SELECT CONCAT(contactLastname,', ',contactFirstname) fullname
+FROM customers
+LIMIT 5;
+
+
+
+# MySQL String Length
+# Get the length of strings measured in bytes and in characters.
+
+# CHAR_LENGTH function gets the length of a string measured in characters
+# LENGTH function gets the length of a string measured in bytes
+SET @str = 'Hello World';
+SELECT CHAR_LENGTH(@str), LENGTH(@str);
+
+
+# MySQL Replace Function
+# replace a string in a column of a table by a new string.
+UPDATE products
+SET productDescription = REPLACE(productDescription,'abuot','about');
+
+SELECT productDescription FROM products;
+
+
+
+
+# MySQL Substring
+# Extracts a substring starting from a position with a specific length.
+# SUBSTR(string,position)
+# This SUBSTRING  function returns a substring from the string starting from 
+# the position. The returned substring starts from the position position to 
+# the end of the string.
+SELECT SUBSTRING('Hello World',6);
+#################################################
+
+
+
+#################################################
+# Other MySQL functions
+# MySQL LAST_INSERT_ID
+# Obtain the generated sequence number of the last insert record
+CREATE TABLE tbl_ident_try(
+   id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+   description varchar(250) NOT NULL
+);
+ 
+INSERT INTO tbl_ident_try(description)
+VALUES('Hello World');
+ 
+SELECT LAST_INSERT_ID();
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 5 - Queryng Data by Usng Joins and Subqueries
+#---------------------------------------------------------------------------
+
+#################################################
+# Inner Join
+# Inner join retrieves records from multiple tables
+# by using a comparison operator on a common column.
+SELECT Persons.LastName, Persons.FirstName, Persons.P_Id, Orders.OrderNo
+FROM Persons
+INNER JOIN
+Orders
+ON Persons.P_Id=Orders.P_Id
+ORDER BY Persons.LastName;
+
+
+
+# Outer Join
+# Outer Join displays the result set containing all the rows
+# from one table and the matching rows from another table
+
+# LEFT OUTER JOIN
+# The LEFT JOIN keyword returns all rows from the left table (table_name1)
+# even if there are no matches in the right table (table_name2).
+# The LEFT JOIN keyword returns all the rows from the left table (Persons)
+# even if there are no matches in the right table (Orders).
+SELECT Persons.LastName, Persons.FirstName, Persons.P_Id,
+Orders.OrderNo
+FROM Persons
+LEFT JOIN Orders
+ON Persons.P_Id=Orders.P_Id
+ORDER BY Persons.LastName;
+
+
+
+
+
+# RIGHT OUTER JOIN
+# The RIGHT JOIN keyword returns all the rows from the right table (table_name2)
+# even if there are no matches in the left table (table_name1)
+# The RIGHT JOIN keyword returns all the rows from the right table (Orders)
+# even if there are no matches in the left table (Persons).
+SELECT Persons.LastName, Persons.FirstName,Persons.P_Id,
+Orders.OrderNo
+FROM Persons
+RIGHT JOIN Orders
+ON Persons.P_Id=Orders.P_Id
+ORDER BY Persons.LastName;
+
+
+
+
+# FULL OUTER JOIN
+# MySQL does not supports FULL JOIN keyword
+# We can do FULL OUTER JOIN by doing so
+# LEFT JOIN
+# UNION
+# RIGHT JOIN
+# It returns all the rows from the left table (Persons)
+# and all the rows from the right table (Orders)
+# If there are rows in "Persons" that do not have matches in "Orders"
+# or if there are rows in "Orders" that do not have matches in "Persons"
+# those rows will be listed as well.
+SELECT Persons.LastName, Persons.FirstName, Persons.P_Id,
+Orders.OrderNo
+FROM Persons
+LEFT JOIN Orders
+ON Persons.P_Id=Orders.P_Id
+UNION
+SELECT Persons.LastName, Persons.FirstName,Persons.P_Id,
+Orders.OrderNo
+FROM Persons
+RIGHT JOIN Orders
+ON Persons.P_Id=Orders.P_Id;
+
+
+# CROSS JOIN
+# It performs catesian product between two tables
+# It joins each row from one table with each row of the other table
+SELECT Persons.LastName, Persons.FirstName, Persons.P_Id,
+Orders.OrderNo FROM
+Persons
+CROSS JOIN
+Orders;
+
+
+
+
+
+#Changing Database here for other queries
+USE `classicmodels`;
+
+
+# Self Join
+# A table is joined with itself. one row joins with another row in the same table.
+# To differentiate the two instances of a single table, the table is
+# given two alias names.
+# We store only employeeNumber of the reportsTo (manager) for all employees, and not jobTitle
+# We join table to itself to get the jobTitle of reportsTo (managers)
+SELECT a.employeeNumber, a.jobTitle, a.reportsTo, b.jobTitle 
+FROM employees a, employees b 
+WHERE a.reportsTo = b.employeeNumber;
+#################################################
+
+
+
+
+#################################################
+# Subqueries are Nested inside other queries
+# IN keyword
+# The subquery returns all offices codes of the offices that locate in the USA.
+# The outer query selects the last name and first name of employees whose office code 
+# is in the result set returned from the subquery.
+SELECT lastname, firstname
+FROM employees
+WHERE officeCode IN
+( SELECT officeCode FROM offices WHERE country = 'USA' );
+
+
+
+
+
+# EXISTS keyword
+# EXISTS keyword is used to check if a set of records exist from subquery
+# It returns TRUE value if subquery contains any row.
+
+
+
+# First, we build a query that checks if there is at least one order with total sales greater than 10K
+SELECT priceEach * quantityOrdered
+FROM orderdetails
+WHERE priceEach * quantityOrdered > 10000
+GROUP BY orderNumber;
+
+
+# The query returns 6 records so that when we use it as a subquery, it will return TRUE; 
+# Therefore the whole query will return all customers meeting the criteria
+SELECT customerName
+FROM customers
+WHERE EXISTS (
+    SELECT priceEach * quantityOrdered
+    FROM orderdetails
+    WHERE priceEach * quantityOrdered > 10000
+    GROUP BY orderNumber
+);
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 6 - Managing Databases and Tables
+#---------------------------------------------------------------------------
+
+
+#################################################
+# Creating a sample table
+CREATE  TABLE tasks (
+  task_id INT NOT NULL ,
+  subject VARCHAR(45) NULL ,
+  start_date DATE NULL ,
+  end_date DATE NULL ,
+  description VARCHAR(200) NULL ,
+  PRIMARY KEY (task_id));
+
+
+# Adding Auto_Increment to primary key column
+# Using alter table statement
+ALTER TABLE tasks
+CHANGE COLUMN task_id task_id INT(11) NOT NULL AUTO_INCREMENT;
+
+
+# Dropping a table
+Drop table tasks;
+
+
+# UNIQE Constraint
+# It is used to enforce uniqueness on non primary key columns
+CREATE  TABLE tasks (
+  task_id INT NOT NULL ,
+  subject VARCHAR(45) NULL ,
+  start_date DATE NULL ,
+  end_date DATE NULL ,
+  description VARCHAR(200) NULL ,
+  constraint uniqe_task_id UNIQUE(task_id)
+);
+
+
+
+# Dropping tables
+Drop Table Orders;
+Drop Table Persons;
+
+
+# CHECK constraint
+# It enforces domain integrity by restricting the values to be inserted in a column
+# The CHECK constraint specifies that the column "P_Id" must only 
+# include integers greater than 0
+CREATE TABLE Persons
+(
+P_Id int NOT NULL,
+LastName varchar(10) NOT NULL,
+FirstName varchar(10),
+Address varchar(20),
+City varchar(20),
+CONSTRAINT chk_Person CHECK (P_Id>0)
+);
+
+
+
+
+# DEFAULT constraint
+# The DEFAULT constraint is used to insert a default value into a column.
+# The default value will be added to all new records, if no other value is specified.
+CREATE TABLE Persons
+(
+P_Id int NOT NULL,
+LastName varchar(255) NOT NULL,
+FirstName varchar(255),
+Address varchar(255),
+City varchar(255) DEFAULT 'Delhi'
+);
+
+
+# Reaming a Table
+ALTER TABLE tasks
+RENAME TO work_items;
+
+
+# Using MySQL ALTER TABLE to drop a column from a table
+ALTER TABLE work_items
+DROP COLUMN description;
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 7 - Manipulating Data in Tables
+#---------------------------------------------------------------------------
+
+#################################################
+# Copying data from an existing table into a new table
+Create Table NewPersons 
+Select * From Persons 
+Where P_Id >= 4;
+
+Select * from NewPersons;
+
+# Updating a record in a table
+Update tbl_employee Set col_Address = 'Kolkata' Where col_emp_id = 1;
+
+Select * from tbl_employee;
+
+# Delete a Record from a table
+Delete from tbl_employee Where col_emp_id = 1;
+
+# Delete all rows in a table without deleting the table.
+DELETE FROM table_name;
+
+# TRUNCATE TABLE Statement
+# we only want to delete the data inside the table, and not the table itself
+TRUNCATE TABLE table_name;
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 8 - MySQL Views
+#---------------------------------------------------------------------------
+
+#################################################
+# A database view is known as a “virtual table” that allows you to query the data in it.
+# A database view is a virtual table or logical table which is defined as a SQL SELECT 
+# query with joins. Because a database view is similar to a database table, which 
+# consists of rows and columns, so you can query data against it. Most database management 
+# systems, including MySQL, allows you to update data in the underlying tables through 
+# the database view with some prerequisites.
+
+# Advantages of database view
+# A database view allows you to simplify complex queries
+# A database view helps limit data access to specific users
+# A database view provides extra security layer
+
+# Disadvantages of database view
+# Performance: querying data from a database view can be slow especially 
+# if the view is created based on other views.
+# Tables dependency: you create view based on underlying tables of the a database. 
+# Whenever you change the structure of those tables that view associates with, 
+# you have to change the view as well.
+#################################################
+
+
+#################################################
+#Changing Database here for other queries
+USE `classicmodels`;
+
+# Create a simple view
+# We can create a view that represents total sales per order
+CREATE VIEW SalePerOrder
+   AS
+  SELECT orderNumber,
+  SUM(quantityOrdered * priceEach) total
+  FROM orderDetails
+  GROUP by orderNumber
+  ORDER BY total DESC;
+
+Select * from SalePerOrder;
+#################################################
+
+
+
+
+#################################################
+# Create view with JOIN
+# The following is an example of creating a view with an INNER JOIN statement. 
+# The view contains order number, and total sales per order.
+CREATE VIEW customerOrders AS
+    SELECT 
+        D.orderNumber, SUM(quantityOrdered * priceEach) total
+    FROM
+        orderDetails D
+            INNER JOIN
+        orders O ON O.orderNumber = D.orderNumber
+    GROUP BY D.orderNumber
+    ORDER BY total DESC;
+
+
+# Display all records of this view
+Select * from customerOrders;
+#################################################
+
+
+#################################################
+# creating updateable view
+################################
+# First, we create a view named officeInfo against the offices table. 
+# The view refers to three columns of the offices table:  officeCode, phone and city.
+CREATE VIEW officeInfo
+AS
+   SELECT officeCode, phone, city
+   FROM offices;
+
+#  we can query data from the officeInfo view using the SELECT statement.
+SELECT * FROM officeInfo;
+
+
+# Then, we can change the phone number of the office with officeCode 4 through 
+#the officeInfo view by using the UPDATE statement.
+UPDATE officeInfo
+SET phone = '+33 14 723 5555'
+WHERE officeCode = 4;
+
+
+# Finally, to see the change, we can select the data from the officeInfo view 
+# by executing following query
+SELECT * FROM officeInfo
+WHERE officeCode = 4;
+#################################################
+
+
+
+
+
+#################################################
+# First, we create a simple view against the employees table that displays the 
+# company’s organization structure
+CREATE VIEW organization AS
+    SELECT 
+        E.firstname AS Employee, M.firstname AS Manager
+    FROM
+        employees AS E
+            INNER JOIN
+        employees AS M ON M.employeeNumber = E.ReportsTo
+    ORDER BY Manager;
+
+
+# Modifying a View
+# The following query modifies the organization view by adding an addition email field.
+ALTER VIEW organization
+  AS
+  SELECT E.firstname AS Employee,
+         E.email AS  employeeEmail,
+         M.firstname AS Manager
+  FROM employees AS E
+  INNER JOIN employees AS M
+    ON M.employeeNumber = E.ReportsTo
+  ORDER BY Manager;
+
+
+
+# MySQL drop views
+DROP VIEW IF EXISTS organization;
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 9 - MySQL Stored Procedures
+#---------------------------------------------------------------------------
+
+#################################################
+# MySQL Stored Procedure
+# A stored procedure is a segment of declarative SQL statements 
+# stored inside the database catalog. 
+
+
+# MySQL stored procedures advantages
+# 1. Typically stored procedures help increase the performance of the applications
+
+# 2. Stored procedures helps reduce the traffic between application and database 
+# server because instead of sending multiple lengthy SQL statements, the 
+# application has to send only name and parameters of the stored procedure.
+
+# MySQL stored procedures disadvantages
+# 1. If you use a lot of stored procedures, the memory usage of every connection 
+# that is using those stored procedures will increase substantially. In addition, 
+# if you overuse a large number of logical operations inside store procedures, the 
+# CPU usage will also increase because database server is not well-designed for 
+# logical operations.
+#################################################
+
+
+##################################################
+DELIMITER //
+CREATE PROCEDURE GetAllProducts()
+   BEGIN
+   SELECT *  FROM products;
+   END //
+DELIMITER ;
+# The first command is DELIMITER //, which is not related to the stored procedure 
+# syntax. The DELIMITER statement changes the standard delimiter which is 
+# semicolon ( ;) to another. In this case, the delimiter is changed from the 
+# semicolon( ;) to double-slashes //. Why do we have to change the delimiter? Because 
+# we want to pass the  stored procedure to the server as a whole rather than letting 
+# mysql tool to interpret each statement at a time.  Following the END keyword, we use the 
+# delimiter // to indicate the end of the stored procedure. 
+# The last command ( DELIMITER;) changes the delimiter back to the standard one.
+
+# We use the CREATE PROCEDURE statement to create a new stored procedure.
+
+# The section between BEGIN and END is called the body of the stored procedure.
+# You put the declarative SQL statements in the body to handle business logic.
+
+
+# Calling stored procedure
+CALL GetAllProducts();
+##################################################
+
+
+
+
+
+
+
+
+##################################################
+# MySQL Stored Procedure Variables
+DELIMITER //
+CREATE PROCEDURE GetTotalProducts()
+   BEGIN
+		DECLARE total_products INT DEFAULT 0;
+ 
+		SELECT COUNT(*) INTO total_products FROM products;
+
+		SELECT total_products;
+   END //
+DELIMITER ;
+
+
+CALL GetTotalProducts();
+
+DROP PROCEDURE GetTotalProducts;
+
+
+
+# A variable that begins with the @ sign at the beginning is session variable. 
+# It is available and accessible until the session ends.
+##################################################
+
+
+
+
+##################################################
+# MySQL Stored Procedure Parameters
+# In MySQL, a parameter has one of three modes IN, OUT or INOUT
+
+# IN - is the default mode. When you define an IN parameter in a stored procedure, 
+# the calling program has to pass an argument to the stored procedure.
+
+# OUT - the value of an OUT parameter can be changed inside the stored procedure 
+# and its new value is passed back to the calling program.
+
+# INOUT - an INOUT parameter is the combination of IN parameter and OUT parameter. 
+# It means that the calling program may pass the argument, and the stored procedure 
+# can modify the INOUT parameter and pass the new value back to the calling program.
+
+
+# IN parameter example
+DELIMITER //
+CREATE PROCEDURE GetOfficeByCountry(IN countryName VARCHAR(255))
+    BEGIN
+        SELECT *
+        FROM offices
+        WHERE country = countryName;
+    END //
+DELIMITER ;
+
+CALL GetOfficeByCountry('USA');
+CALL GetOfficeByCountry('France');
+
+
+
+
+
+
+# OUT parameter example
+DELIMITER $$
+CREATE PROCEDURE CountOrderByStatus(
+        IN orderStatus VARCHAR(25),
+        OUT total INT)
+BEGIN
+    SELECT count(orderNumber)
+    INTO total
+    FROM orders
+    WHERE status = orderStatus;
+END$$
+DELIMITER ;
+
+
+CALL CountOrderByStatus('Shipped',@total);
+SELECT @total;
+
+
+CALL CountOrderByStatus('in process',@total);
+SELECT @total AS  total_in_process;
+
+
+
+
+# INOUT parameter example
+DELIMITER $$
+CREATE PROCEDURE set_counter(INOUT count INT(4),IN inc INT(4))
+BEGIN
+    SET count = count + inc;
+END$$
+DELIMITER ;
+
+
+SET @counter = 1;
+CALL set_counter(@counter,1); -- 2
+CALL set_counter(@counter,1); -- 3
+CALL set_counter(@counter,5); -- 8
+SELECT @counter; -- 8
+##################################################
+
+
+
+
+
+
+##################################################
+# MySQL IF Statement
+
+DELIMITER $$
+CREATE PROCEDURE GetCustomerLevel(
+    in  p_customerNumber int(11),
+    out p_customerLevel  varchar(10))
+BEGIN
+    DECLARE creditlim double;
+ 
+    SELECT creditlimit INTO creditlim
+    FROM customers
+    WHERE customerNumber = p_customerNumber;
+ 
+    IF creditlim > 50000 THEN
+    SET p_customerLevel = 'PLATINUM';
+    ELSEIF (creditlim <= 50000 AND creditlim >= 10000) THEN
+        SET p_customerLevel = 'GOLD';
+    ELSEIF creditlim < 10000 THEN
+        SET p_customerLevel = 'SILVER';
+    END IF;
+ 
+END$$
+DELIMITER ;
+
+CALL GetCustomerLevel(103,@customerLevel);
+
+SELECT @customerLevel;
+##################################################
+
+
+
+
+
+##################################################
+# MySQL CASE Statement
+
+DELIMITER $$
+ 
+CREATE PROCEDURE GetCustomerShipping(
+        in  p_customerNumber int(11),
+        out p_shiping        varchar(50))
+BEGIN
+    DECLARE customerCountry varchar(50);
+ 
+    SELECT country INTO customerCountry
+    FROM customers
+    WHERE customerNumber = p_customerNumber;
+ 
+    CASE customerCountry
+        WHEN  'USA' THEN
+           SET p_shiping = '2-day Shipping';
+        WHEN 'Canada' THEN
+           SET p_shiping = '3-day Shipping';
+        ELSE
+           SET p_shiping = '5-day Shipping';
+    END CASE;
+ 
+END$$
+DELIMITER ;
+
+
+
+SET @customerNo = 112;
+ 
+SELECT country into @country
+FROM customers
+WHERE customernumber = @customerNo;
+ 
+CALL GetCustomerShipping(@customerNo,@shipping);
+ 
+SELECT @customerNo AS Customer,
+       @country    AS Country,
+       @shipping   AS Shipping;
+##################################################
+
+
+
+
+
+##################################################
+# Searched CASE statement
+# The simple CASE statement only allows you match a value of an expression 
+# against a set of distinct values. In order to perform more complex matches 
+# such as ranges you use the searched CASE statement. The searched CASE statement 
+#is equivalent to the IF statement, however its construct is much more readable.
+
+DELIMITER $$
+CREATE PROCEDURE GetCustomerLevel2(
+    in  p_customerNumber int(11),
+    out p_customerLevel  varchar(10))
+BEGIN
+    DECLARE creditlim double;
+ 
+    SELECT creditlimit INTO creditlim
+    FROM customers
+    WHERE customerNumber = p_customerNumber;
+ 
+    CASE  
+        WHEN creditlim > 50000 THEN
+           SET p_customerLevel = 'PLATINUM';
+        WHEN (creditlim <= 50000 AND creditlim >= 10000) THEN
+           SET p_customerLevel = 'GOLD';
+        WHEN creditlim < 10000 THEN
+           SET p_customerLevel = 'SILVER';
+    END CASE;
+ 
+END$$
+DELIMITER ;
+
+
+CALL GetCustomerLevel2(112,@level);
+SELECT @level AS 'Customer Level';
+##################################################
+
+
+
+
+
+
+##################################################
+# Loops in Stored Procedures
+##################################################
+
+##################################################
+# WHILE loop
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS WhileLoopProc$$
+CREATE PROCEDURE WhileLoopProc()
+       BEGIN
+               DECLARE x  INT;
+               DECLARE str  VARCHAR(255);
+               SET x = 1;
+               SET str =  '';
+               WHILE x  <= 5 DO
+                           SET  str = CONCAT(str,x,',');
+                           SET  x = x + 1;
+               END WHILE;
+               SELECT str;
+       END$$
+   DELIMITER ;
+
+CALL WhileLoopProc();
+##################################################
+
+
+##################################################
+# REPEAT loop
+DELIMITER $$
+DROP PROCEDURE IF EXISTS RepeatLoopProc$$
+CREATE PROCEDURE RepeatLoopProc()
+       BEGIN
+               DECLARE x  INT;
+               DECLARE str  VARCHAR(255);
+               SET x = 1;
+               SET str =  '';
+               REPEAT
+                           SET  str = CONCAT(str,x,',');
+                           SET  x = x + 1;
+               UNTIL x  > 5
+               END REPEAT;
+               SELECT str;
+       END$$
+DELIMITER ;
+
+CALL RepeatLoopProc();
+##################################################
+
+
+
+##################################################
+# LOOP, LEAVE and ITERATE Statements
+
+# The LEAVE statement allows you to exit the loop immediately 
+# without waiting for checking the condition. The LEAVE statement 
+# works like the  break statement in other languages such as PHP, 
+# C/C++, Java, etc
+
+# The ITERATE statement allows you to skip the entire code under it 
+# and start a new iteration. The ITERATE statement is similar to the 
+#continue statement in PHP, C/C++, Java, etc.
+
+# MySQL also gives you a LOOP statement that allows you to execute a 
+# block of code repeatedly with an additional flexibility of using a 
+# loop label.
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS LOOPLoopProc$$
+CREATE PROCEDURE LOOPLoopProc()
+       BEGIN
+               DECLARE x  INT;
+               DECLARE str  VARCHAR(255);
+               SET x = 1;
+               SET str =  '';
+               loop_label:  LOOP
+                           IF  x > 10 THEN
+                               LEAVE  loop_label;
+                           END  IF;
+                           SET  x = x + 1;
+                           IF  (x mod 2) THEN
+                               ITERATE  loop_label;
+                           ELSE
+                               SET  str = CONCAT(str,x,',');
+                           END  IF;
+ 
+               END LOOP;    
+               SELECT str;
+       END$$
+DELIMITER ;
+
+CALL LOOPLoopProc();
+##################################################
+
+
+
+
+##################################################
+# MySQL Cursor
+# To handle a result set inside a stored procedure, you use a cursor. 
+# A cursor allows you to iterate a set of rows returned by a query and 
+# process each row accordingly.
+
+# MySQL cursor is read only, non-scrollable and asensitive.
+# Read only: you cannot update data in the underlying table through the cursor.
+
+# Non-scrollable: you can only fetch rows in the order determined by the SELECT 
+# statement. You cannot fetch rows in the reversed order. In addition, you 
+# cannot skip rows or jump to a specific row in the result set.
+
+# Asensitive: 
+# there are two kinds of cursors: asensitive cursor and insensitive cursor. 
+# An asensitive cursor points to the actual data, 
+# whereas an insensitive cursor uses a temporary copy of the data. 
+# An asensitive cursor performs faster than an insensitive cursor 
+# because it does not have to make a temporary copy of data. 
+# However, any change that made to the data from other connections will 
+# affect the data that is being used by an asensitive cursor, 
+# therefore it is safer if you don’t update the data that is being used by an asensitive cursor. 
+# MySQL cursor is asensitive.
+
+
+# 1. First, you have to declare a cursor by using the DECLARE statement:
+# The cursor declaration must be after any variable declaration. If you 
+# declare a cursor before variables declaration, MySQL will issue an error. 
+# A cursor must always be associated with a SELECT statement.
+# DECLARE cursor_name CURSOR FOR SELECT_statement;
+
+
+
+# 2. Next, you open the cursor by using the OPEN statement. 
+# The OPEN statement initializes the result set for the cursor therefore you 
+# must call the OPEN statement before fetching rows from the result set.
+# OPEN cursor_name;
+
+# 3. Then, you use the FETCH statement to retrieve the next row pointed 
+# by the cursor and move the cursor to the next row in the result set.
+# FETCH cursor_name INTO variables list;
+
+# 4. Finally, you call the CLOSE statement to deactivate the cursor and 
+# release the memory associated with it as follows:
+# CLOSE cursor_name;
+
+
+# 5. When working with MySQL cursor, you must also declare a NOT FOUND handler 
+# to handle the situation when the cursor could not find any row. Because each 
+# time you call the FETCH statement, the cursor attempts to read the next row 
+# in the result set. When the cursor reaches the end of the result set, it will 
+# not be able to get the data, and a condition is raised. The handler is used to 
+# handle this condition.
+# DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+
+# In short following tells how MySQL cursor works.
+# Declare > Open > Fetch > Empty > Yes > Close
+#                    ^   <  No
+
+
+DELIMITER $$
+ 
+CREATE PROCEDURE build_email_list (INOUT email_list varchar(4000))
+BEGIN
+ 
+    DECLARE v_finished INTEGER DEFAULT 0;
+        DECLARE v_email varchar(100) DEFAULT "";
+ 
+    -- declare cursor for employee email
+    DEClARE email_cursor CURSOR FOR
+        SELECT email FROM employees;
+ 
+    -- declare NOT FOUND handler
+    DECLARE CONTINUE HANDLER
+        FOR NOT FOUND SET v_finished = 1;
+ 
+    OPEN email_cursor;
+ 
+    get_email: LOOP
+ 
+        FETCH email_cursor INTO v_email;
+ 
+        IF v_finished = 1 THEN
+            LEAVE get_email;
+        END IF;
+ 
+        -- build email list
+        SET email_list = CONCAT(v_email,";",email_list);
+ 
+    END LOOP get_email;
+ 
+    CLOSE email_cursor;
+ 
+END$$
+ 
+DELIMITER ;
+
+
+SET @email_list = "";
+CALL build_email_list(@email_list);
+SELECT @email_list;
+##################################################
+
+
+
+##################################################
+# Listing Stored Procedures in a MySQL Database
+
+# To list all stored procedures of the databases that you have the privilege 
+# to access, you use the  SHOW PROCEDURE STATUS statement as follows
+SHOW PROCEDURE STATUS;
+
+# If you want to show just stored procedure in a particular database, you can use the 
+# WHERE clause in the  SHOW PROCEDURE STATUS statement
+SHOW PROCEDURE STATUS WHERE db = 'classicmodels';
+
+# If you want to show stored procedures that have a particular pattern e.g., its name 
+# contains product, you can use the LIKE operator as the following command
+SHOW PROCEDURE STATUS WHERE name LIKE '%product%';
+
+# Displaying stored procedure’s source code
+# To display source code of a particular stored procedure, you use the  
+# SHOW CREATE PROCEDURE statement as follows
+SHOW CREATE PROCEDURE GetAllProducts;
+##################################################
+
+
+
+
+##################################################
+# MySQL Error Handling in Stored Procedures
+
+# First, we create a new table named  article_tags
+CREATE TABLE article_tags(
+    article_id INT,
+    tag_id     INT,
+    PRIMARY KEY(article_id,tag_id)
+);
+
+
+# Second, we create a stored procedure that inserts a pair of ids of article and tag 
+# into the  article_tags table
+DELIMITER $$
+ 
+CREATE PROCEDURE insert_article_tags(IN article_id INT, IN tag_id INT)
+BEGIN
+ 
+    DECLARE CONTINUE HANDLER FOR 1062
+    SELECT CONCAT('duplicate keys (',article_id,',',tag_id,') found') AS msg;
+ 
+    -- insert a new record into article_tags
+    INSERT INTO article_tags(article_id,tag_id)
+    VALUES(article_id,tag_id);
+ 
+    -- return tag count for the article
+    SELECT COUNT(*) FROM article_tags;
+END $$
+DELIMITER ;
+
+
+# we add tag id 1, 2 and 3 for the article 1 by calling the  insert_article_tags 
+# stored procedure as follows
+CALL insert_article_tags(1,1);
+CALL insert_article_tags(1,2);
+CALL insert_article_tags(1,3);
+
+
+# Now let’s try to insert a duplicate key to see if the handler is really invoked.
+CALL insert_article_tags(1,3);
+# We got the error message 'duplicate keys (1,3) found'
+##################################################
+
+
+
+
+
+##################################################
+# MySQL Stored Function
+# A stored function is a special kind of a stored program that returns 
+# a single value. 
+# Different from a stored procedure, you can use a stored function in SQL 
+# statements wherever an expression is used. This helps improve the readability 
+# and maintainability of the procedural code.
+# By default, all parameters are implicitly IN parameters. You cannot specify 
+# IN, OUT or INOUT modifiers to the parameters.
+# you must specify the data type of the return value in the RETURNS statement. 
+#It can be any valid MySQL data types.
+
+# for the same input parameters, if the stored function returns the same result, 
+# it is considered deterministic and not deterministic otherwise.
+
+# you write the code in the statements section. It can be a single statement or a 
+# compound statement. Inside the statements section, you have to specify at least 
+# one RETURN statement. The RETURN statement returns a value to the caller.
+
+DELIMITER $$
+ 
+CREATE FUNCTION CustomerLevel(p_creditLimit double) RETURNS VARCHAR(10)
+    DETERMINISTIC
+BEGIN
+    DECLARE lvl varchar(10);
+ 
+    IF p_creditLimit > 50000 THEN
+        SET lvl = 'PLATINUM';
+    ELSEIF (p_creditLimit <= 50000 AND p_creditLimit >= 10000) THEN
+        SET lvl = 'GOLD';
+    ELSEIF p_creditLimit < 10000 THEN
+        SET lvl = 'SILVER';
+    END IF;
+ 
+    RETURN (lvl);
+END $$
+DELIMITER ;
+
+# Now we can call the CustomerLevel() in an SQL SELECT statement as follows :
+SELECT customerName,
+       CustomerLevel(creditLimit)
+FROM customers;
+
+
+
+# Calling a Stored Function in a Stored Procedure
+# We also rewrite the  GetCustomerLevel() stored procedure that we developed 
+# in the MySQL IF statement
+DELIMITER $$
+ 
+CREATE PROCEDURE GetCustomerLevel3(
+    IN  p_customerNumber INT(11),
+    OUT p_customerLevel  varchar(10)
+)
+BEGIN
+    DECLARE creditlim DOUBLE;
+ 
+    SELECT creditlimit INTO creditlim
+    FROM customers
+    WHERE customerNumber = p_customerNumber;
+ 
+    SELECT CUSTOMERLEVEL(creditlim)
+    INTO p_customerLevel;
+ 
+END $$
+DELIMITER ;
+
+
+CALL GetCustomerLevel3(103,@customerLevel);
+
+SELECT @customerLevel;
+##################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 10 - MySQL Triggers
+# Commands
+#---------------------------------------------------------------------------
+
+##################################################
+# Introduction to SQL Trigger
+
+# A SQL trigger is a set of  SQL statements stored in the database catalog. 
+# A SQL trigger is executed or fired whenever an event associated with a table 
+# occurs e.g.,  insert, update or delete.
+
+# A SQL trigger is a special type of stored procedure. It is special because 
+# it is not called directly like a stored procedure. The main difference 
+# between a trigger and a stored procedure is that a trigger is called 
+# automatically when a data modification event is made against a table whereas a 
+# stored procedure must be called explicitly.
+
+# Advantages of using SQL triggers
+# SQL triggers provide an alternative way to check the integrity of data.
+# SQL triggers can catch errors in business logic in the database layer.
+# SQL triggers are very useful to audit the changes of data in tables.
+
+# Disadvantages of using SQL triggers
+# 1. SQL triggers only can provide an extended validation and they cannot replace 
+# all the validations. Some simple validations have to be done in the application layer. 
+# For example, you can validate user’s inputs in the client side by using JavaScript 
+# or in the server side using server side scripting languages such as JSP, PHP, ASP.NET, 
+# Perl, etc.
+# 2. SQL triggers may increase the overhead of the database server.
+##################################################
+
+
+
+##################################################
+# MySQL Triggers Implementation
+# In MySQL, a trigger is a set of SQL statements that is invoked automatically when 
+# a change is made to the data on the associated table. A trigger can be defined 
+# to be invoked either before or after the data is changed by INSERT, UPDATE or 
+# DELETE statements. 
+# MySQL allows you to define maximum six triggers for each table.
+#    BEFORE INSERT – activated before data is inserted into the table.
+#    AFTER INSERT- activated after data is inserted into the table.
+#    BEFORE UPDATE – activated before data in the table is updated.
+#    AFTER UPDATE - activated after data in the table is updated.
+#    BEFORE DELETE – activated before data is removed from the table.
+#    AFTER DELETE – activated after data is removed from the table.
+
+
+# MySQL stores triggers in a data directory e.g., /data/classicmodels/ with the files 
+# named tablename.TRG and triggername.TRN:
+#    The tablename.TRG file maps the trigger to the corresponding table.
+#    the triggername.TRN file contains the trigger definition.
+
+# MySQL triggers cannot:
+#    Use SHOW, LOAD DATA, LOAD TABLE, BACKUP DATABASE, RESTORE, FLUSH and RETURN statements.
+#    Use statements that commit or rollback implicitly or explicitly such as COMMIT, 
+#    ROLLBACK, START TRANSACTION, LOCK/UNLOCK TABLES, ALTER, CREATE, DROP, RENAME, etc.
+#    Use prepared statements such as PREPARE, EXECUTE, etc.
+##################################################
+
+
+
+
+##################################################
+# Create Trigger in MySQL
+
+# First Create a table
+CREATE TABLE employees_audit (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    employeeNumber int(11) NOT NULL,
+    lastname varchar(50) NOT NULL,
+    changedon datetime DEFAULT NULL,
+    action varchar(50) DEFAULT NULL,
+    PRIMARY KEY (id)
+)
+
+
+# we create a BEFORE UPDATE trigger to be invoked before a 
+# change is made to the employees table.
+DELIMITER $$
+CREATE TRIGGER before_employee_update
+    BEFORE UPDATE ON employees
+    FOR EACH ROW BEGIN
+ 
+    INSERT INTO employees_audit
+    SET action = 'update',
+         employeeNumber = OLD.employeeNumber,
+        lastname = OLD.lastname,
+        changedon = NOW();
+END$$
+DELIMITER ;
+
+# Now it’s time to update an employee record to test if the trigger is really invoked.
+UPDATE employees
+SET lastName = 'Gomes'
+WHERE employeeNumber = 1056;
+
+
+# To check if the trigger was invoked by the UPDATE statement, we can query the 
+# employees_audit table by using the following query
+SELECT *
+FROM employees_audit;
+
+SELECT * 
+FROM employees
+WHERE employeeNumber = 1056;
+##################################################
+
+
+
+
+
+##################################################
+# Managing Trigger in MySQL
+
+# Display a trigger 'before_employee_update'
+# In Database 'classicmodels'
+SELECT * FROM Information_Schema.Triggers
+WHERE Trigger_schema = 'classicmodels' AND
+      Trigger_name = 'before_employee_update';
+
+
+
+# Retrieve all triggers in a particular database
+SELECT * FROM Information_Schema.Triggers
+WHERE Trigger_schema = 'classicmodels';
+
+
+
+# find all triggers associated with a particular table
+SELECT * FROM Information_Schema.Triggers
+WHERE Trigger_schema = 'classicmodels' AND
+      Event_object_table = 'employees';
+##################################################
+
+
+
+
+
+##################################################
+# MySQL Drop Trigger
+
+#  remove before_employee_update trigger associated with the table employees
+DROP TRIGGER before_employee_update;
+
+
+
+# There is no such ALTER TRIGGER statement exists in MySQL, and you cannot modify 
+# an existing trigger like modifying other database objects such as tables 
+# and stored procedures. To modify a trigger, you have to delete it first 
+# and recreate it with the new code.
+#################################################
+
+
+
+#################################################
+# Working with MySQL Scheduled Event
+# A MySQL event is a task that runs based on a predefined schedule therefore 
+# sometimes it is referred to as a scheduled event. MySQL event is also known 
+# as “temporal trigger” because it is triggered by time, not by table update like 
+# a trigger. A MySQL event is similar to a cron job in UNIX or a task scheduler in Windows.
+# You can use MySQL events in many cases such as optimizing database tables, cleaning up 
+# logs, archiving data, or generate complex reports during off-peak time.
+#################################################
+
+
+#################################################
+# MySQL event scheduler configuration
+#  see the status of event scheduler thread
+SHOW PROCESSLIST;
+
+# enable and start the event scheduler thread
+SET GLOBAL event_scheduler = ON;
+
+#  see the status of event scheduler thread
+SHOW PROCESSLIST;
+
+# disable and stop the event scheduler thread
+SET GLOBAL event_scheduler = OFF;
+#################################################
+
+
+
+#################################################
+# A stored procedure is only executed when it is invoked directly;
+# A trigger is executed when an event associated with a table such as 
+# insert, update, or delete  event occurs, 
+# while an event can be executed at once or at more regular intervals.
+
+# First, create a new table named messages by using the  CREATE TABLE statement 
+CREATE TABLE IF NOT EXISTS messages (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    message VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL
+);
+
+
+
+# Second, create an event by using the  CREATE EVENT statement:
+# an event is automatically dropped when it is expired. In our case, it is one-time 
+# event and expired when its execution completed.
+CREATE EVENT IF NOT EXISTS test_event_01
+ON SCHEDULE AT CURRENT_TIMESTAMP
+DO
+  INSERT INTO messages(message,created_at)
+  VALUES('Test MySQL Event 1',NOW());
+
+# Third, check the messages table; you will see that we have 1 record. 
+# It means the event was executed when it is created.
+SELECT * FROM messages;
+
+
+
+# To shows all events of a database schema, you use the following statement:
+SHOW EVENTS FROM classicmodels;
+
+
+# To prevent an event from automatically dropping, you can use the  ON COMPLETION PRESERVE clause. 
+# The following statement creates another one-time event that is executed after 
+# its creation time 1 minute and not dropped after execution.
+CREATE EVENT test_event_02
+ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
+ON COMPLETION PRESERVE
+DO
+   INSERT INTO messages(message,created_at)
+   VALUES('Test MySQL Event 2',NOW());
+
+
+# Check the messages table
+SELECT * FROM messages;
+
+
+# To shows all events of a database schema, you use the following statement:
+SHOW EVENTS FROM classicmodels;
+
+# Creates a recurring event that executes every minute and is expired in 1 hour 
+# from its creation time:
+CREATE EVENT test_event_03
+ON SCHEDULE EVERY 1 MINUTE
+STARTS CURRENT_TIMESTAMP
+ENDS CURRENT_TIMESTAMP + INTERVAL 1 HOUR
+DO
+   INSERT INTO messages(message,created_at)
+   VALUES('Test MySQL recurring Event',NOW());
+
+
+# Check the messages table
+SELECT * FROM messages;
+
+
+
+# Drop MySQL events
+DROP EVENT IF EXISTS test_event_03;
+#################################################
+
+
+
+
+#################################################
+# Modifying MySQL Events
+
+
+# The following statement creates an event that inserts a new record 
+# every minute into the messages table.
+CREATE EVENT test_event_04
+ON SCHEDULE EVERY 1 MINUTE
+DO
+   INSERT INTO messages(message,created_at)
+   VALUES('Test ALTER EVENT statement',NOW());
+
+
+# To change existing events, you use the  ALTER EVENT statement as follows:
+
+# Changing schedules
+ALTER EVENT test_event_04
+ON SCHEDULE EVERY 2 MINUTE;
+
+
+# Changing event body
+ALTER EVENT test_event_04
+DO
+   INSERT INTO messages(message,created_at)
+   VALUES('Message from event',NOW());
+
+
+# Check the messages table
+SELECT * FROM messages;
+
+
+# Disable events
+ALTER EVENT test_event_04
+DISABLE;
+
+
+# check the status of events
+SHOW EVENTS FROM classicmodels;
+
+# Enable events
+ALTER EVENT test_event_04
+ENABLE;
+
+# Rename events
+ALTER EVENT test_event_04
+RENAME TO test_event_05;
+
+# Move events to another database
+ALTER EVENT classicmodels.test_event_05
+RENAME TO new_db_test_5.test_event_05;
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 11 - MySQL Administration
+#---------------------------------------------------------------------------
+
+#################################################
+# MySQL Create User
+CREATE USER dbAdminUser1@localhost
+IDENTIFIED BY 'password';
+#################################################
+
+
+#################################################
+# MySQL Changing Password for Accounts
+# MySQL changing password using SET PASSWORD statement
+SET PASSWORD FOR 'dbAdminUser1'@'localhost' = PASSWORD('newpass');
+#################################################
+
+
+#################################################
+# Using MySQL GRANT to Grant Privileges to Account
+
+# If you want to grant a particular privilege to an account, you must have 
+# at least that privilege and GRANT OPTION privilege.
+
+# The ON *.* clause means all databases and all objects in the databases. 
+# The only limitation of the user is that it can only connect to the 
+# database server from the localhost, which makes the MySQL server more secure.
+
+# Grant all permissions on all databases to user 'dbAdminUser1'
+# This user can connect only thorugh localhost
+# GRANT OPTION is a privilege
+GRANT ALL ON *.* TO 'dbAdminUser1'@'localhost' WITH GRANT OPTION;
+
+
+# To create a user that has all access in the sample database and can connect from 
+# any host you use the following statements:
+CREATE USER 'super2'@'%' IDENTIFIED BY 'password';
+GRANT ALL ON classicmodels.* TO 'super2'@'%' WITH GRANT OPTION;
+
+
+# You can create a user that can execute the SELECT, INSERT and UPDATE statements 
+# against the classicmodels sample database using the following statements
+CREATE USER 'super3'@'%' IDENTIFIED BY 'password';
+GRANT SELECT, UPDATE, DELETE ON  classicmodels.* TO 'super3'@'%';
+#################################################
+
+
+
+
+
+#################################################
+# Revoking Privileges from Users Using MySQL REVOKE
+
+# Check the privileges of dbAdminUser1 account using SHOW GRANTS statement:
+SHOW GRANTS FOR 'dbAdminUser1'@'localhost';
+
+#  revoke all privileges of the dbAdminUser1 account
+REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'dbAdminUser1'@'localhost';
+
+# Check the privileges of dbAdminUser1 account using SHOW GRANTS statement:
+SHOW GRANTS FOR 'dbAdminUser1'@'localhost';
+
+
+
+# You can revoke the UPDATE and DELETE privileges from the super3 account:
+REVOKE UPDATE, DELETE ON classicmodels.*  FROM 'super3'@'%';
+
+# Check the privileges of super3 account using SHOW GRANTS statement:
+SHOW GRANTS FOR 'super3'@'%';
+
+
+# Drop a User
+DROP USER 'dbAdminUser1'@'localhost';
+DROP USER 'super2'@'%';
+DROP USER 'super3'@'%';
+#################################################
+
+
+
+#################################################
+# Backup Databases Using mysqldump Tool
+# Syntax mysqldump -u [username] –p[password] [database_name] > [dump_file.sql]
+mysqldump -u 'root' –p ''  classicmodels > c:\temp\backup001.sql
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------
+# Chapter 12 - MySQL Misc
+#---------------------------------------------------------------------------
+
+#################################################
+# MySQL reset auto increment value by using TRUNCATE TABLE statement
+TRUNCATE TABLE table_name;
+#################################################
+
+
+#################################################
+# MySQL Copy Table
+CREATE TABLE IF NOT EXISTS offices_usa
+SELECT *  FROM offices
+WHERE country = 'USA';
+
+Select * from offices_usa;
+#################################################
+
+#---------------------------------------------------------------------------
+
+
+
+
+
+
+
+/***************************************************************************
+	MySQL Course Concludes
+****************************************************************************/
+
+
+
+
